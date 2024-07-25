@@ -78,7 +78,6 @@ class ExpenseController extends Controller
         if ($expense->user_id !== Auth::id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
-        $expense->delete();
-        return response()->json(null, 204);
+        return $expense->delete();
     }
 }

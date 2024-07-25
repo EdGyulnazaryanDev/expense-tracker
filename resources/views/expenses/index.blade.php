@@ -144,7 +144,7 @@
                     }
                 }).then(response => response.json())
                     .then(data => {
-                        if (data.success) {
+                        if (data) {
                             document.querySelector(`tr[data-id="${id}"]`).remove();
                         } else {
                             alert('Failed to delete expense');
