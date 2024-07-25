@@ -17,6 +17,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/expenses', [ExpenseController::class, 'index']);
     Route::post('/expenses', [ExpenseController::class, 'store']);
     Route::get('/expenses/{expense}', [ExpenseController::class, 'show']);
-    Route::put('/expenses/{expense}', [ExpenseController::class, 'update']);
+    Route::post('/expenses/{expense}', [ExpenseController::class, 'update']);
     Route::delete('/expenses/{expense}', [ExpenseController::class, 'destroy']);
 });

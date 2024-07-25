@@ -2,29 +2,50 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Expense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ExpenseController extends Controller
 {
     public function index()
     {
         $expenses = Auth::user()->expenses()->with('category')->get();
-        return response()->json($expenses);
+        $categories = Category::all();
+
+        return view(
+            'expenses.index',
+            compact('expenses', 'categories')
+        );
+        return response()->json($expenses );
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $validated = Validator::make($request->all(), [
             'category_id' => 'required|exists:categories,id',
             'amount' => 'required|numeric',
             'description' => 'nullable|string',
             'date' => 'required|date',
         ]);
 
-        $expense = Auth::user()->expenses()->create($validated);
-        return response()->json($expense, 201);
+        if ($validated->passes()) {
+//            dd($validated->getData());
+            $passedData = $validated->getData();
+            $passedData['user_id'] = Auth::id();
+            $expense = Expense::create($passedData);
+            $expenses = Auth::user()->expenses()->with('category')->get();
+            $categories = Category::all();
+            return redirect()->route('expenses.index')->with('success', 'Expense created successfully')->with(['expenses' => $expenses, 'categories' => $categories]);
+            return response()->json($expense, 201);
+        }
+
+        if ($validated->fails()){
+            $errors = $validated->errors()->getMessages();
+            return view('expenses.index', compact('validated', 'errors'));
+        }
     }
 
     public function show(Expense $expense)
