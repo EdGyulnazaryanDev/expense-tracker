@@ -38,6 +38,7 @@
                         <td>
                             <button class="btn btn-outline-warning btn-sm" onclick="editCategory({{ $category->id }})">Edit</button>
                             <button class="btn btn-outline-danger btn-sm" onclick="deleteCategory({{ $category->id }})">Delete</button>
+                            <a href="{{ route('expenses.index', ['category_id' => $category->id]) }}" class="btn btn-outline-dark">Expenses</a>
                         </td>
                     </tr>
                 @endforeach

@@ -4,7 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\CategoryController;
-
+use App\Http\Controllers\MemberController;
+use App\Http\Middleware\AdminMiddleware;
 
 Route::get('/', function () {
     return view('welcome');
@@ -28,14 +29,19 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('category.destroy');
     });
 
-//    Route::resource('expenses', ExpenseController::class);
     Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
     Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
     Route::get('/expenses/{expense}', [ExpenseController::class, 'show'])->name('expenses.show');
     Route::put('/expenses/{expense}', [ExpenseController::class, 'update'])->name('expenses.update');
     Route::delete('/expenses/{expense}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
 
-
+    Route::prefix('members')->group(function () {
+        Route::get('/', [MemberController::class, 'index'])->name('members.index');
+        Route::post('/', [MemberController::class, 'store'])->name('members.store');
+        Route::get('/{member}', [MemberController::class, 'show'])->name('members.show');
+        Route::put('/{member}', [MemberController::class, 'update'])->name('members.update');
+        Route::delete('/{member}', [MemberController::class, 'destroy'])->name('members.destroy');
+    });
 
 });
 

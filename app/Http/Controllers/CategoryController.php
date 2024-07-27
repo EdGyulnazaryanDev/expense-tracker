@@ -46,4 +46,9 @@ class CategoryController extends Controller
     {
         return $category->delete();
     }
+
+    public function getCategoryExpenses(Category $category)
+    {
+        return $category->expenses;
+    }
 }
