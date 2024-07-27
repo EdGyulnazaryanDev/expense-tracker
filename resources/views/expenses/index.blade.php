@@ -53,6 +53,7 @@
         <table class="table">
             <thead>
             <tr>
+                <th>Category</th>
                 <th>Description</th>
                 <th>Amount</th>
                 <th>Date</th>
@@ -64,6 +65,7 @@
             @if(isset($expenses) && !is_null($expenses))
                 @foreach($expenses as $expense)
                     <tr data-id="{{ $expense->id }}">
+                        <td>{{ $expense->category->name }}</td>
                         <td>{{ $expense->description }}</td>
                         <td>${{ number_format($expense->amount, 2) }}</td>
                         <td>{{ $expense->date }}</td>

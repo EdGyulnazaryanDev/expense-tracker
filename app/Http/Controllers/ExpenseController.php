@@ -10,9 +10,12 @@ use Illuminate\Support\Facades\Validator;
 
 class ExpenseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $expenses = Auth::user()->expenses()->with('category')->get();
+        if (isset($request->category_id) && !is_null($request->category_id)) {
+            $expenses = $expenses->where('category_id', $request->category_id);
+        }
         $categories = Category::all();
 
         return view(
