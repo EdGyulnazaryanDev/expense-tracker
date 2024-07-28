@@ -17,7 +17,8 @@
             padding: 20px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            background-color: #f9f9f9;
+            color: #464647;
+            background: linear-gradient(180deg, rgba(112,143,150,1) 0%, rgba(170,137,95,0.47102591036414565) 90%, rgba(224,216,204,1) 100%);
         }
         .metric {
             font-size: 2rem;
