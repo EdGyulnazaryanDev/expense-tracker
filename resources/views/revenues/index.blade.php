@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <a class="btn btn-outline-info mt-3" id="toggleFormButton">Open Expenses Form</a>
+        <a class="btn btn-outline-info mt-3" id="toggleFormButton">Open Revenues Form</a>
         <style>
             .slide-form {
                 display: none;
@@ -23,8 +23,8 @@
                 @endforeach
             </div>
         @endif
-        <div id="expenseFormContainer" class="slide-form">
-            <form id="expense-form" method="POST" action="{{ route('expenses.store') }}">
+        <div id="revenueFormContainer" class="slide-form">
+            <form id="revenue-form" method="POST" action="{{ route('revenues.store') }}">
                 @csrf
                 <div class="form-group">
                     <label for="description">Description</label>
@@ -46,10 +46,10 @@
                         @endforeach
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary mt-3">Add Expense</button>
+                <button type="submit" class="btn btn-primary mt-3">Add Revenue</button>
             </form>
         </div>
-        <h3 class="mt-4">Expense List</h3>
+        <h3 class="mt-4">Revenues List</h3>
         <table class="table">
             <thead>
             <tr>
@@ -61,18 +61,18 @@
                 <th>Actions</th>
             </tr>
             </thead>
-            <tbody id="expense-list">
-            @if(isset($expenses) && !is_null($expenses))
-                @foreach($expenses as $expense)
-                    <tr data-id="{{ $expense->id }}">
-                        <td>{{ $expense->category->name }}</td>
-                        <td>{{ $expense->description }}</td>
-                        <td>${{ number_format($expense->amount, 2) }}</td>
-                        <td>{{ $expense->date }}</td>
-                        <td>{{ $expense->category->name }}</td>
+            <tbody id="revenue-list">
+            @if(isset($revenues) && !is_null($revenues))
+                @foreach($revenues as $revenue)
+                    <tr data-id="{{ $revenue->id }}">
+                        <td>{{ $revenue->category->name }}</td>
+                        <td>{{ $revenue->description }}</td>
+                        <td>${{ number_format($revenue->amount, 2) }}</td>
+                        <td>{{ $revenue->date }}</td>
+                        <td>{{ $revenue->category->name }}</td>
                         <td>
-                            <button class="btn btn-warning btn-sm" onclick="editExpense({{ $expense->id }})">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteExpense({{ $expense->id }})">Delete</button>
+                            <button class="btn btn-warning btn-sm" onclick="editRevenue({{ $revenue->id }})">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteRevenue({{ $revenue->id }})">Delete</button>
                         </td>
                     </tr>
                 @endforeach
@@ -81,18 +81,18 @@
         </table>
     </div>
 
-    <div class="modal fade" id="editExpenseModal" tabindex="-1" aria-labelledby="editExpenseModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editRevenueModal" tabindex="-1" aria-labelledby="editRevenueModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editExpenseModalLabel">Edit Expense</h5>
+                    <h5 class="modal-title" id="editRevenueModalLabel">Edit Revenue</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editExpenseForm">
+                    <form id="editRevenueForm">
                         @csrf
                         @method('PUT')
-                        <input type="hidden" id="expenseId" name="expenseId">
+                        <input type="hidden" id="revenueId" name="revenueId">
                         <div class="form-group">
                             <label for="editDescription">Description</label>
                             <input type="text" class="form-control" id="editDescription" name="description" />
@@ -113,7 +113,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary mt-3">Update Expense</button>
+                        <button type="submit" class="btn btn-primary mt-3">Update Revenue</button>
                     </form>
                 </div>
             </div>
@@ -122,23 +122,23 @@
 
     <script>
         document.getElementById('toggleFormButton').addEventListener('click', function() {
-            var formContainer = document.getElementById('expenseFormContainer');
+            var formContainer = document.getElementById('revenueFormContainer');
             var button = document.getElementById('toggleFormButton');
 
             if (formContainer.classList.contains('show')) {
                 formContainer.classList.remove('show');
                 formContainer.style.maxHeight = null;
-                button.textContent = 'Open Expenses Form';
+                button.textContent = 'Open Revenues Form';
             } else {
                 formContainer.classList.add('show');
                 formContainer.style.maxHeight = formContainer.scrollHeight + "px";
-                button.textContent = 'Close Expenses Form';
+                button.textContent = 'Close Revenues Form';
             }
         });
 
-        function deleteExpense(id) {
-            if (confirm('Are you sure you want to delete this expense?')) {
-                fetch(`/expenses/${id}`, {
+        function deleteRevenue(id) {
+            if (confirm('Are you sure you want to delete this revenue?')) {
+                fetch(`/revenues/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -149,20 +149,20 @@
                         if (data) {
                             document.querySelector(`tr[data-id="${id}"]`).remove();
                         } else {
-                            alert('Failed to delete expense');
+                            alert('Failed to delete revenue');
                         }
                     });
             }
         }
 
-        function editExpense(id) {
+        function editRevenue(id) {
             const row = document.querySelector(`tr[data-id="${id}"]`);
             const description = row.children[0].textContent;
             const amount = row.children[1].textContent.replace('$', '');
             const date = row.children[2].textContent;
             const category = row.children[3].textContent;
 
-            document.getElementById('expenseId').value = id;
+            document.getElementById('revenueId').value = id;
             document.getElementById('editDescription').value = description;
             document.getElementById('editAmount').value = amount;
             document.getElementById('editDate').value = date;
@@ -174,21 +174,21 @@
                 }
             }
 
-            var myModal = new bootstrap.Modal(document.getElementById('editExpenseModal'), {
+            var myModal = new bootstrap.Modal(document.getElementById('editRevenueModal'), {
                 keyboard: false
             });
             myModal.show();
 
-            document.getElementById('editExpenseForm').addEventListener('submit', function(event) {
+            document.getElementById('editRevenueForm').addEventListener('submit', function(event) {
                 event.preventDefault();
 
-                const id = document.getElementById('expenseId').value;
+                const id = document.getElementById('revenueId').value;
                 const updatedDescription = document.getElementById('editDescription').value;
                 const updatedAmount = document.getElementById('editAmount').value;
                 const updatedDate = document.getElementById('editDate').value;
                 const updatedCategoryId = document.getElementById('editCategory').value;
 
-                fetch(`/expenses/${id}`, {
+                fetch(`/revenues/${id}`, {
                     method: 'PUT',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -207,11 +207,11 @@
                             row.children[1].textContent = `$${parseFloat(updatedAmount).toFixed(2)}`;
                             row.children[2].textContent = updatedDate;
                             row.children[3].textContent = editCategorySelect.options[editCategorySelect.selectedIndex].text;
-                            var myModalEl = document.getElementById('editExpenseModal');
+                            var myModalEl = document.getElementById('editRevenueModal');
                             var modal = bootstrap.Modal.getInstance(myModalEl);
                             modal.hide();
                         } else {
-                            alert('Failed to update expense');
+                            alert('Failed to update revenue');
                         }
                     });
             });

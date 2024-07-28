@@ -5,15 +5,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MemberController;
-use App\Http\Middleware\AdminMiddleware;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RevenueController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -34,6 +33,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/expenses/{expense}', [ExpenseController::class, 'show'])->name('expenses.show');
     Route::put('/expenses/{expense}', [ExpenseController::class, 'update'])->name('expenses.update');
     Route::delete('/expenses/{expense}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
+
+    Route::group(['prefix' => 'revenues'], function () {
+        Route::get('/', [RevenueController::class, 'index'])->name('revenues.index');
+        Route::post('/create', [RevenueController::class, 'store'])->name('revenues.store');
+        Route::get('/{revenue}', [RevenueController::class, 'show'])->name('revenues.show');
+        Route::put('/{revenue}', [RevenueController::class, 'update'])->name('revenues.update');
+        Route::delete('/{revenue}', [RevenueController::class, 'destroy'])->name('revenues.destroy');
+    });
 
     Route::prefix('members')->group(function () {
         Route::get('/', [MemberController::class, 'index'])->name('members.index');

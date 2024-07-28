@@ -3,24 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Expense;
+use App\Models\Revenue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-class ExpenseController extends Controller
+class RevenueController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
-        $expenses = Auth::user()->expenses()->with('category')->get();
+        $revenues = Auth::user()->revenues()->with('category')->get();
         if (isset($request->category_id) && !is_null($request->category_id)) {
-            $expenses = $expenses->where('category_id', $request->category_id);
+            $revenues = $revenues->where('category_id', $request->category_id);
         }
         $categories = Category::all();
 
         return view(
-            'expenses.index',
-            compact('expenses', 'categories')
+            'revenues.index',
+            compact('revenues', 'categories')
         );
     }
 
@@ -37,30 +40,30 @@ class ExpenseController extends Controller
 //            dd($validated->getData());
             $passedData = $validated->getData();
             $passedData['user_id'] = Auth::id();
-            $expense = Expense::create($passedData);
-            $expenses = Auth::user()->expenses()->with('category')->get();
+            $revenue = Revenue::create($passedData);
+            $revenues = Auth::user()->revenues()->with('category')->get();
             $categories = Category::all();
-            return redirect()->route('expenses.index')->with('success', 'Expense created successfully')->with(['expenses' => $expenses, 'categories' => $categories]);
-            return response()->json($expense, 201);
+            return redirect()->route('revenues.index')->with('success', 'Revenue created successfully')->with(['revenues' => $revenues, 'categories' => $categories]);
+            return response()->json($revenue, 201);
         }
 
         if ($validated->fails()){
             $errors = $validated->errors()->getMessages();
-            return view('expenses.index', compact('validated', 'errors'));
+            return view('revenues.index', compact('validated', 'errors'));
         }
     }
 
-    public function show(Expense $expense)
+    public function show(Revenue $revenue)
     {
-        if ($expense->user_id !== Auth::id()) {
+        if ($revenue->user_id !== Auth::id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
-        return response()->json($expense);
+        return response()->json($revenue);
     }
 
-    public function update(Request $request, Expense $expense)
+    public function update(Request $request, Revenue $revenue)
     {
-        if ($expense->user_id !== Auth::id()) {
+        if ($revenue->user_id !== Auth::id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -71,15 +74,15 @@ class ExpenseController extends Controller
             'date' => 'required|date',
         ]);
 
-        $expense->update($validated);
-        return response()->json($expense);
+        $revenue->update($validated);
+        return response()->json($revenue);
     }
 
-    public function destroy(Expense $expense)
+    public function destroy(Revenue $revenue)
     {
-        if ($expense->user_id !== Auth::id()) {
+        if ($revenue->user_id !== Auth::id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
-        return $expense->delete();
+        return $revenue->delete();
     }
 }
